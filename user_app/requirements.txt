@@ -8,3 +8,6 @@ gunicorn
 celery
 redis
 pytest
+flask_sqlalchemy
+flask_migrate
+
