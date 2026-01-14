@@ -1,12 +1,7 @@
-from .lib.db_helper import *  
+from ..lib.db_helper import *  
 from flask import Blueprint, redirect, render_template, request, session, url_for, current_app, jsonify, send_file
 
 auth = Blueprint("auth", __name__, url_prefix="/auth")
-
-
-@auth.route('/', methods=['GET', 'POST'])
-def index():
-    return render_template('index.html')
 
 
 @auth.route('/register', methods=['POST', 'GET'])
@@ -67,20 +62,3 @@ def delete():
     except Exception as e:
         current_app.logger.error(f"Delete error: {e}")
         return jsonify({"error": "Failed to delete user"}), 500
-
-
-@auth.route('/closet', methods=['GET'])
-def closet():
-    userid = request.args.get("userid")
-    username = request.args.get("username")
-    print(username, userid)
-    if not userid or not username:
-        return redirect(url_for("auth.login"))
-    try:
-        current_app.logger.info('Getting user closet') 
-        image_s3_uris = get_user_apparels(userid)
-        images = [uri[0] for uri in image_s3_uris]
-        return render_template("closet.html", closet=images, userid=userid, username=username)
-    except Exception as e:
-        current_app.logger.error(f"Closet retrieval error: {e}")
-        return redirect(url_for("auth.index"))
