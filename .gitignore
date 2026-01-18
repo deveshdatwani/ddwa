@@ -6,6 +6,10 @@ __pycache__/
 
 # Datasets 
 *dataset/
+*data/
+dl/data/
+dl/checkpoint/
+*checkpoint
 
 # C extensions
 *.so
