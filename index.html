@@ -7,8 +7,9 @@
 <script src="https://cdn.tailwindcss.com"></script>
 <style>
   body {
-    background: #f8f8f8;
+    margin: 0;
     font-family: 'San Francisco', -apple-system, system-ui, sans-serif;
+    background: #f8f8f8;
   }
   .card {
     background: white;
@@ -21,85 +22,44 @@
     display: flex;
     flex-direction: column;
     align-items: center;
+    margin-bottom: 1rem;
   }
   .card:hover {
     transform: translateY(-3px);
     box-shadow: 0 8px 20px rgba(0,0,0,0.1);
   }
-  .card-icon {
-    font-size: 2.5rem;
-    margin-bottom: 1rem;
-    color: #4b5563;
-    transition: transform 0.25s ease, color 0.25s ease;
-  }
-  .card:hover .card-icon {
-    transform: scale(1.05);
-    color: #2563eb;
-  }
-  .card-title {
-    font-weight: 600;
-    font-size: 1.2rem;
-    color: #111827;
-    margin-bottom: 0.25rem;
-  }
-  .card-desc {
-    color: #6b7280;
-    font-size: 0.95rem;
-  }
-  .header-title {
-    font-size: 3rem;
-    font-weight: 700;
-    letter-spacing: 0.05em;
-    color: #111827;
-  }
-  .header-tagline {
-    color: #6b7280;
-    font-size: 1rem;
-    margin-top: 0.25rem;
-  }
+  .card-title { font-weight: 600; font-size: 1.2rem; margin-bottom: 0.25rem; }
+  .card-desc { color: #6b7280; font-size: 0.95rem; }
+  .github-link { margin-top: 0.5rem; font-size: 0.85rem; color: #6b7280; display: inline-flex; align-items: center; text-decoration: none; transition: color 0.2s; }
+  .github-link:hover { color: #2563eb; }
 </style>
 </head>
-<body class="flex flex-col items-center justify-center min-h-screen gap-12 p-6">
+<body>
 
-<div class="text-center">
-  <div class="header-title">IT'S A VIBE!</div>
-  <div class="header-tagline">Coded. Curated. Crafted.</div>
-  <div class="text-gray-400 mt-1">by Devesh Datwani</div>
+<div class="min-h-screen p-6 bg-gray-50">
+  <div class="text-center mb-12">
+    <h1 class="text-3xl font-bold">VIBE</h1>
+    <p class="text-gray-500">Curated. Crafted. Vibe Coded by Devesh Datwani</p>
+  </div>
+
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
+    <div class="card">
+      <div class="card-title">App One</div>
+      <div class="card-desc">Clean, minimal interface</div>
+      <a href="#" class="github-link">GitHub</a>
+    </div>
+    <div class="card">
+      <div class="card-title">App Two</div>
+      <div class="card-desc">Fast and intuitive</div>
+      <a href="#" class="github-link">GitHub</a>
+    </div>
+    <div class="card">
+      <div class="card-title">App Three</div>
+      <div class="card-desc">Elegant design</div>
+      <a href="#" class="github-link">GitHub</a>
+    </div>
+  </div>
 </div>
-
-
-<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 w-full max-w-6xl">
-  <a href="https://app1.example.com" class="card">
-    <div class="card-icon">A</div>
-    <div class="card-title">App One</div>
-    <div class="card-desc">Clean, minimal interface</div>
-  </a>
-
-  <a href="https://app2.example.com" class="card">
-    <div class="card-icon">B</div>
-    <div class="card-title">App Two</div>
-    <div class="card-desc">Fast and intuitive</div>
-  </a>
-
-  <a href="https://app3.example.com" class="card">
-    <div class="card-icon">C</div>
-    <div class="card-title">App Three</div>
-    <div class="card-desc">Elegant design</div>
-  </a>
-
-</div>
-
-<script>
-  // subtle background fade
-  const body = document.body;
-  let t = 0;
-  setInterval(() => {
-    t += 0.002;
-    const color1 = 248 + Math.sin(t) * 1.5;
-    const color2 = 248 + Math.cos(t) * 1.5;
-    body.style.background = `linear-gradient(135deg, hsl(0,0%,${color1}%), hsl(0,0%,${color2}%))`;
-  }, 30);
-</script>
 
 </body>
 </html>
