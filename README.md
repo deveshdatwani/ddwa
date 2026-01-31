@@ -1,71 +1,114 @@
 
+
 # Modular Deep Learning Training System
 
-This project allows you to train any PyTorch model by specifying the model class path and configuration.
+This project provides a modular, flexible framework for training, validating, and deploying PyTorch models with:
+- Custom, cloned, or Hugging Face models
+- Configurable loss functions
+- YAML and CLI configuration (CLI overrides YAML)
+- Weights & Biases (wandb) experiment tracking
+- User confirmation before each run
 
-## How to Use
+## Quick Start
 
-1. **Implement your model**
-	- Create your model class in any module, e.g. `dl/models/my_model.py`.
-	- Your model should inherit from `torch.nn.Module`.
-	- See `dl/models/template_model.py` for a template.
+1. **Add Your Model**
+	 - Place custom models in `dl/models/custom/`, cloned models in `dl/models/cloned/`.
+	 - Each model should be a `torch.nn.Module` class.
+	 - See `dl/models/template_model.py` for a template.
 
-2. **Train your model**
-	- Run the training script with the full class path:
-	  ```bash
-	  python dl/train/train.py --model dl.models.template_model.TemplateModel --dataset cifar10 --config dl/train/config.yaml
-	  ```
-	- Replace `dl.models.template_model.TemplateModel` with your own model class path.
+2. **Configure Your Experiment**
+	 - Edit `dl/train/config.yaml` to set:
+		 - Model source/name and parameters
+		 - Loss function type/params
+		 - Dataset and run settings
+		 - wandb project and plot name
 
-3. **Configuration**
-	- Model and training parameters are set in the YAML config file (see `dl/train/config.yaml`).
+3. **Run Training**
+	 - Use the CLI to override any config option:
+		 ```bash
+		 python dl/train/train.py --model__source custom --model__name MyModel --loss__type focal --wandb__plot_name my_exp
+		 ```
+	 - The trainer will print all settings and ask for confirmation before starting.
 
-## Example Model Template
+4. **Weights & Biases Integration**
+	 - Set your wandb API key (see wandb docs) or run `wandb login` once.
+	 - All runs are logged to wandb with your chosen plot name.
 
-See `dl/models/template_model.py`:
+## Configuration Example (`dl/train/config.yaml`)
 
-```python
-import torch.nn as nn
+```yaml
+model:
+	source: custom         # custom, cloned, huggingface
+	name: vit              # model name or huggingface id
+	depth: 10
+	in_dim: 192
+	inner_dim: 128
+	num_classes: 10
+	img_size: 32
+	patch_size: 8
+	in_channels: 3
 
-class TemplateModel(nn.Module):
-	 def __init__(self, input_dim=3*32*32, num_classes=10, **kwargs):
-		  super().__init__()
-		  self.fc = nn.Linear(input_dim, num_classes)
-	 def forward(self, x):
-		  x = x.view(x.size(0), -1)
-		  return self.fc(x)
+loss:
+	type: cross_entropy    # cross_entropy, focal, etc.
+	params: {}
+
+wandb:
+	project: dl-training
+	plot_name: experiment_1
+
+dataset:
+	name: cifar10
+	path: ../data/cifar-10-batches-py
+
+run:
+	batch_size: 32
+	lr: 0.0001
+	epochs: 10
+	save_path: "./checkpoint/cifar_transformer.pth"
+	device: "cpu"
+	quantize: false
+	quantized_save_path: "./checkpoint/model_quantized.pth"
 ```
 
+## Features
 
-## Using Hugging Face or External Models
+- **Modular Models:** Add custom or cloned models easily. Hugging Face models supported.
+- **Flexible Loss:** Choose loss function (cross-entropy, focal, etc.) via config/CLI.
+- **Configurable Everything:** All options in YAML and CLI (CLI takes precedence).
+- **User Confirmation:** Trainer prints config and asks for y/n before running.
+- **wandb Logging:** Set project/plot name in config or CLI for clear experiment tracking.
+- **Quantization:** Optional post-training quantization.
 
-You can also use models from Hugging Face Transformers or other external libraries, as long as the model class is importable and its constructor matches your config.
+## Directory Structure
 
-### Example: Hugging Face ViT
+- `dl/models/custom/` — Your custom models
+- `dl/models/cloned/` — Models cloned from external sources
+- `dl/utils/` — Trainer, loss functions, dataloaders
+- `dl/train/` — Training scripts and configs
 
-1. **Install the transformers library**
-	```bash
-	pip install transformers
-	```
+## Example: Add a Custom Model
 
-2. **Run the training script with a Hugging Face model**
-	```bash
-	python dl/train/train.py --model transformers.AutoModelForImageClassification --config dl/train/config.yaml
-	```
+1. Create `dl/models/custom/MyModel.py`:
+	 ```python
+	 import torch.nn as nn
+	 class MyModel(nn.Module):
+			 def __init__(self, ...):
+					 super().__init__()
+					 # ...
+			 def forward(self, x):
+					 # ...
+	 ```
+2. Set `model.source: custom` and `model.name: MyModel` in config or CLI.
 
-3. **Example config.yaml**
-	```yaml
-	model:
-	  pretrained_model_name_or_path: "google/vit-base-patch16-224"
-	# ... other config options ...
-	```
+## Example: Use a Hugging Face Model
 
-**Note:**
-- The model class path (e.g., `transformers.AutoModelForImageClassification`) must be importable.
-- The config must provide the correct arguments for the model's constructor.
-
----
+1. Install transformers:
+	 ```bash
+	 pip install transformers
+	 ```
+2. Set `model.source: huggingface` and `model.name: <hf-model-id>` in config or CLI.
 
 ## Notes
-- You can implement any model architecture and pass it to the trainer.
-- The trainer is agnostic to the model implementation as long as it is a `torch.nn.Module`.
+- All config options can be set in YAML or overridden via CLI (e.g., `--loss__type focal`).
+- The trainer is fully modular and will prompt for confirmation before running.
+- For wandb, set your API key once with `wandb login` or via `WANDB_API_KEY` env variable.
