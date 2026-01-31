@@ -1,3 +1,62 @@
+## Custom Loss Functions
+
+You can use any built-in or custom loss function in your experiments.
+
+### 1. Writing a Custom Loss Function
+
+- Add your custom loss class to `dl/utils/loss.py` (or another importable location).
+- Your loss should inherit from `torch.nn.Module` and implement the `forward` method.
+
+Example:
+
+```python
+from torch import nn
+import torch
+
+class MyCustomLoss(nn.Module):
+	def __init__(self, alpha=1.0):
+		super().__init__()
+		self.alpha = alpha
+	def forward(self, pred, target):
+		# Example custom loss logic
+		return torch.mean((pred - target) ** 2) * self.alpha
+```
+
+### 2. Using Your Custom Loss
+
+- In your `config.yaml`, set:
+
+```yaml
+loss:
+  type: my_custom_loss
+  params:
+	alpha: 0.5
+```
+
+- Or override via CLI:
+  ```bash
+  python dl/train/train.py --loss__type my_custom_loss --loss__params.alpha 0.5
+  ```
+
+- The trainer will look for a class named `MyCustomLoss` in `dl/utils/loss.py` (class name should match type, case-insensitive, underscores ignored).
+
+### 3. Registering the Loss in Trainer
+
+If you add a new loss, update the `get_loss_fn` function in the trainer to import and instantiate your loss:
+
+```python
+def get_loss_fn(loss_cfg):
+	typ = loss_cfg.get('type', 'cross_entropy')
+	if typ == 'cross_entropy':
+		from torch import nn
+		return nn.CrossEntropyLoss(**loss_cfg.get('params', {}))
+	elif typ == 'my_custom_loss':
+		from utils.loss import MyCustomLoss
+		return MyCustomLoss(**loss_cfg.get('params', {}))
+	# ...
+```
+
+Now you can use your custom loss in any experiment!
 
 
 # Modular Deep Learning Training System
