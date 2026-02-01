@@ -4,6 +4,8 @@ __pycache__/
 *$py.class
 
 
+dl/models/cloned/*
+
 # Datasets 
 *dataset/
 *data/
