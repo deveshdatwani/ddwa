@@ -1,4 +1,0 @@
-python-multipart
-dotenv
-celery
-redis

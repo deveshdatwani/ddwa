@@ -23,7 +23,7 @@ def create_app(config_name=None):
     # migrate.init_app(app, db)
 
     # Register blueprints
-    from user_app.routes.main import main_bp
+    from user.routes.main import main_bp
     app.register_blueprint(main_bp)
 
     # Logging
